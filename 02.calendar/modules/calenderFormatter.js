@@ -1,16 +1,23 @@
-module.exports = (year, month) => {
-  const monthAndYear = `      ${month}月 ${year}`;
-  const dayOfWeek = "日 月 火 水 木 金 土";
-  const date = formatDate(year, month);
+module.exports = CalenderFormatter;
 
-  return [monthAndYear, dayOfWeek, date].join("\n");
+function CalenderFormatter(year, month) {
+  this.year = year;
+  this.month = month;
+}
+
+CalenderFormatter.prototype.formatCalender = function () {
+  return [
+    `      ${this.month}月 ${this.year}`,
+    "日 月 火 水 木 金 土",
+    this.formatDate(),
+  ].join("\n");
 };
 
-const formatDate = (year, month) => {
-  const lastDay = new Date(year, month, 0);
+CalenderFormatter.prototype.formatDate = function () {
+  const lastDay = new Date(this.year, this.month, 0);
   const lastDate = lastDay.getDate();
-  const firstDay = new Date(year, month - 1, 1);
-  let allDates = [];
+  const firstDay = new Date(this.year, this.month - 1, 1);
+  const allDates = [];
 
   for (let i = 1; i <= lastDate; i++) {
     allDates.push(i.toString().padStart(2, " "));
@@ -21,8 +28,8 @@ const formatDate = (year, month) => {
     allDates.unshift("  ");
   }
 
-  let oneWeek = [];
-  let formattedDates = [];
+  const oneWeek = [];
+  const formattedDates = [];
 
   for (let i = 0; i < allDates.length; i++) {
     oneWeek.push(allDates[i]);

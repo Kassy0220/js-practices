@@ -1,5 +1,6 @@
 const calenderFormatter = require("../modules/calenderFormatter.js");
 const numericalValidator = require("../modules/numericalValidator.js");
+
 const isYear = new numericalValidator(1970, 2100);
 const isMonth = new numericalValidator(1, 12);
 const argv = require("minimist")(process.argv.slice(2));
@@ -12,4 +13,5 @@ const targetMonth = isMonth.validate(argv["m"])
   ? argv["m"]
   : executedDate.getMonth() + 1;
 
-console.log(calenderFormatter(targetYear, targetMonth));
+const formatter = new calenderFormatter(targetYear, targetMonth);
+console.log(formatter.formatCalender());
