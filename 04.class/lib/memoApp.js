@@ -17,8 +17,8 @@ export class MemoApp {
       case "create":
         this.#createMemo();
         break;
-      default:
-        console.log("まだ未実装です");
+      case "l":
+        this.#listAllMemos();
         break;
     }
   }
@@ -28,7 +28,7 @@ export class MemoApp {
     const date = dateFormat(new Date(), "yyyy/mm/dd HH:MM:ss");
     const memo = new Memo({
       id: uuidv4(),
-      content: memoContent,
+      content: memoContent.join(""),
       createdAt: date,
       updatedAt: date,
     });
@@ -41,7 +41,7 @@ export class MemoApp {
 
     return new Promise((resolve, reject) => {
       rl.on("line", (line) => {
-        stdin.push(line);
+        stdin.push(line + "\n");
       });
 
       rl.on("close", () => {
@@ -60,5 +60,12 @@ export class MemoApp {
     } else {
       return false;
     }
+  }
+
+  async #listAllMemos() {
+    const allMemos = await MemoDB.retrieveAllMemos();
+    allMemos.forEach((memo) => {
+      console.log(memo.content.trim().split("\n")[0]);
+    });
   }
 }

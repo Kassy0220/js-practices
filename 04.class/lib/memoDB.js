@@ -14,4 +14,19 @@ export class MemoDB {
       stmt.finalize();
     });
   }
+
+  static retrieveAllMemos() {
+    const db = MemoDB.#db;
+    return new Promise((resolve, reject) => {
+      db.serialize(() => {
+        db.all("SELECT * FROM memos", (err, rows) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(rows);
+          }
+        });
+      });
+    });
+  }
 }
