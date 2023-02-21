@@ -2,6 +2,7 @@ import * as readline from "node:readline";
 import { stdin as input } from "node:process";
 import { v4 as uuidv4 } from "uuid";
 import dateFormat from "dateformat";
+import enquirer from "enquirer";
 import { Memo } from "./memo.js";
 import { MemoDB } from "./memoDB.js";
 
@@ -19,6 +20,9 @@ export class MemoApp {
         break;
       case "l":
         this.#listAllMemos();
+        break;
+      case "r":
+        this.#referToMemo();
         break;
     }
   }
@@ -67,5 +71,27 @@ export class MemoApp {
     allMemos.forEach((memo) => {
       console.log(memo.content.trim().split("\n")[0]);
     });
+  }
+
+  async #referToMemo() {
+    const allMemos = await MemoDB.retrieveAllMemos();
+    const { Select } = enquirer;
+    const prompt = new Select({
+      name: "memoId",
+      message: "Choose memo you want to see",
+      choices: allMemos.map((memo) => {
+        return { name: memo.id, message: memo.content.trim().split("\n")[0] };
+      }),
+    });
+
+    prompt
+      .run()
+      .then((memoId) => {
+        const choosedMemo = allMemos.find((memo) => {
+          return memo.id === memoId;
+        });
+        console.log(choosedMemo.content.trim());
+      })
+      .catch(console.error);
   }
 }
