@@ -24,6 +24,9 @@ export class MemoApp {
       case "r":
         this.#referToMemo();
         break;
+      case "d":
+        this.#deleteMemo();
+        break;
     }
   }
 
@@ -75,15 +78,7 @@ export class MemoApp {
 
   async #referToMemo() {
     const allMemos = await MemoDB.retrieveAllMemos();
-    const { Select } = enquirer;
-    const prompt = new Select({
-      name: "memoId",
-      message: "Choose memo you want to see",
-      choices: allMemos.map((memo) => {
-        return { name: memo.id, message: memo.content.trim().split("\n")[0] };
-      }),
-    });
-
+    const prompt = this.#createPrompt(allMemos, "see");
     prompt
       .run()
       .then((memoId) => {
@@ -93,5 +88,28 @@ export class MemoApp {
         console.log(choosedMemo.content.trim());
       })
       .catch(console.error);
+  }
+
+  async #deleteMemo() {
+    const allMemos = await MemoDB.retrieveAllMemos();
+    const prompt = this.#createPrompt(allMemos, "delete");
+    prompt
+      .run()
+      .then((memoId) => {
+        MemoDB.deleteMemo(memoId);
+      })
+      .catch(console.error);
+  }
+
+  #createPrompt(allMemos, message) {
+    const { Select } = enquirer;
+    const prompt = new Select({
+      name: "memoId",
+      message: `Choose memo you want to ${message}`,
+      choices: allMemos.map((memo) => {
+        return { name: memo.id, message: memo.content.trim().split("\n")[0] };
+      }),
+    });
+    return prompt;
   }
 }

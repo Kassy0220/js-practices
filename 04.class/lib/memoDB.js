@@ -29,4 +29,13 @@ export class MemoDB {
       });
     });
   }
+
+  static deleteMemo(id) {
+    const db = MemoDB.#db;
+    db.serialize(() => {
+      const stmt = db.prepare("DELETE FROM memos WHERE id = ?");
+      stmt.run([id]);
+      stmt.finalize();
+    });
+  }
 }
