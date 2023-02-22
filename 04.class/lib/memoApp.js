@@ -1,10 +1,9 @@
-import * as readline from "node:readline";
-import { stdin as input } from "node:process";
 import { v4 as uuidv4 } from "uuid";
 import dateFormat from "dateformat";
 import { Memo } from "./memo.js";
 import { MemoDB } from "./memoDB.js";
 import { createPrompt } from "./createPrompt.js";
+import { readStdin } from "./readStdin.js";
 
 export class MemoApp {
   #option;
@@ -31,7 +30,7 @@ export class MemoApp {
   }
 
   async #createMemo() {
-    const memoContent = await this.#readStdin();
+    const memoContent = await readStdin();
     const date = dateFormat(new Date(), "yyyy/mm/dd HH:MM:ss");
     const memo = new Memo({
       id: uuidv4(),
@@ -40,33 +39,6 @@ export class MemoApp {
       updatedAt: date,
     });
     MemoDB.saveMemo(memo.id, memo.content, memo.createdAt, memo.updatedAt);
-  }
-
-  #readStdin() {
-    const rl = readline.createInterface({ input });
-    const stdin = [];
-
-    return new Promise((resolve, reject) => {
-      rl.on("line", (line) => {
-        stdin.push(line + "\n");
-      });
-
-      rl.on("close", () => {
-        if (this.#isEmpty(stdin)) {
-          reject(new Error("メモの内容を入力してください"));
-        } else {
-          resolve(stdin);
-        }
-      });
-    });
-  }
-
-  #isEmpty(array) {
-    if (array.length === 0) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   async #listAllMemos() {
