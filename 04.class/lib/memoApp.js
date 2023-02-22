@@ -2,9 +2,9 @@ import * as readline from "node:readline";
 import { stdin as input } from "node:process";
 import { v4 as uuidv4 } from "uuid";
 import dateFormat from "dateformat";
-import enquirer from "enquirer";
 import { Memo } from "./memo.js";
 import { MemoDB } from "./memoDB.js";
+import { createPrompt } from "./createPrompt.js";
 
 export class MemoApp {
   #option;
@@ -78,7 +78,7 @@ export class MemoApp {
 
   async #referToMemo() {
     const allMemos = await MemoDB.retrieveAllMemos();
-    const prompt = this.#createPrompt(allMemos, "see");
+    const prompt = createPrompt(allMemos, "see");
     prompt
       .run()
       .then((memoId) => {
@@ -92,24 +92,12 @@ export class MemoApp {
 
   async #deleteMemo() {
     const allMemos = await MemoDB.retrieveAllMemos();
-    const prompt = this.#createPrompt(allMemos, "delete");
+    const prompt = createPrompt(allMemos, "delete");
     prompt
       .run()
       .then((memoId) => {
         MemoDB.deleteMemo(memoId);
       })
       .catch(console.error);
-  }
-
-  #createPrompt(allMemos, message) {
-    const { Select } = enquirer;
-    const prompt = new Select({
-      name: "memoId",
-      message: `Choose memo you want to ${message}`,
-      choices: allMemos.map((memo) => {
-        return { name: memo.id, message: memo.content.trim().split("\n")[0] };
-      }),
-    });
-    return prompt;
   }
 }
