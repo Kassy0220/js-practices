@@ -17,13 +17,13 @@ export class MemoApp {
       case "create":
         this.#createMemo();
         break;
-      case "l":
+      case "list":
         this.#listAllMemos();
         break;
-      case "r":
+      case "refer":
         this.#referToMemo();
         break;
-      case "d":
+      case "delete":
         this.#deleteMemo();
         break;
     }

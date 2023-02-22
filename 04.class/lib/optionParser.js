@@ -1,21 +1,27 @@
 export class OptionParser {
   static parse(argv) {
     delete argv._;
-    const option = argv;
+    const option = Object.keys(argv)[0];
 
-    if (OptionParser.#isEmpty(option)) {
+    if (option === undefined) {
       // オプションが指定されていない場合は'create'を返す
       return "create";
     } else {
-      return Object.keys(option)[0];
+      return OptionParser.#returnOptionName(option);
     }
   }
 
-  static #isEmpty(object) {
-    if (Object.keys(object).length === 0) {
-      return true;
-    } else {
-      return false;
+  static #returnOptionName(option) {
+    switch (option) {
+      case "l":
+      case "list":
+        return "list";
+      case "r":
+      case "refer":
+        return "refer";
+      case "d":
+      case "delete":
+        return "delete";
     }
   }
 }
