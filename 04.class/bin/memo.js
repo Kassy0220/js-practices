@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import minimist from "minimist";
 import { MemoApp } from "../lib/memoApp.js";
 import { OptionParser } from "../lib/optionParser.js";
