@@ -51,25 +51,17 @@ export class MemoApp {
   async #referToMemo() {
     const allMemos = await MemoDB.retrieveAllMemos();
     const prompt = createPrompt(allMemos, "see");
-    prompt
-      .run()
-      .then((memoId) => {
-        const choosedMemo = allMemos.find((memo) => {
-          return memo.id === memoId;
-        });
-        console.log(choosedMemo.content.trim());
-      })
-      .catch(console.error);
+    const memoId = await prompt.run();
+    const choosedMemo = allMemos.find((memo) => {
+      return memo.id === memoId;
+    });
+    console.log(choosedMemo.content.trim());
   }
 
   async #deleteMemo() {
     const allMemos = await MemoDB.retrieveAllMemos();
     const prompt = createPrompt(allMemos, "delete");
-    prompt
-      .run()
-      .then((memoId) => {
-        MemoDB.deleteMemo(memoId);
-      })
-      .catch(console.error);
+    const memoId = await prompt.run();
+    MemoDB.deleteMemo(memoId);
   }
 }
